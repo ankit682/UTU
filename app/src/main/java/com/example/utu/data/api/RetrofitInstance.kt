@@ -2,7 +2,7 @@ package com.example.utu.data.api
 
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
-import com.example.utu.data.model.*
+import com.example.utu.data.model.Item
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -12,11 +12,6 @@ import retrofit2.converter.gson.GsonConverterFactory
 object RetrofitInstance {
 
     private val itemList = MutableLiveData<List<Item>>()
-    private val topList = MutableLiveData<List<Toppost>>()
-    private val eduList = MutableLiveData<List<Edutip>>()
-    private val nftList = MutableLiveData<List<Nfttip>>()
-    private val creatorList = MutableLiveData<List<Creator>>()
-    private val mediaList = MutableLiveData<List<Media>>()
 
     const val TAG = "RetrofitInstance"
 
@@ -32,18 +27,19 @@ object RetrofitInstance {
         Log.d(TAG, "inside getItemData()")
         val retrofitCall = retrofitApi.getItems()
 
-        retrofitCall.enqueue(object : Callback<Item> {
-            override fun onResponse(call: Call<Item>, response: Response<Item>) {
+        retrofitCall.enqueue(object : Callback<List<Item>> {
+            override fun onResponse(call: Call<List<Item>>, response: Response<List<Item>>) {
                 Log.d(TAG, "inside onResponse()")
 
                 val body = response.body()
 
-                Log.v(TAG, "$body")
-
+                if (body != null) {
+                    itemList.value = body
+                }
             }
 
-            override fun onFailure(call: Call<Item>, t: Throwable) {
-                Log.d(TAG, "inside onFailure()")
+            override fun onFailure(call: Call<List<Item>>, t: Throwable) {
+                Log.d(TAG, "inside onFailure() $t")
             }
 
         })
